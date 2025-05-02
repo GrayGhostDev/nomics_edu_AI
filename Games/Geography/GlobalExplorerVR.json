@@ -1,0 +1,19 @@
+{
+  "name": "GlobalExplorerVR",
+  "version": "1.0.0",
+  "subject": "Geography",
+  "min_grade": 1,
+  "max_grade": 12,
+  "supported_difficulties": [
+    1,
+    2,
+    3
+  ],
+  "description": "Default template for Geography",
+  "last_updated": "2025-04-30T21:04:11.155120",
+  "author": "System",
+  "tags": [
+    "geography"
+  ],
+  "dependencies": []
+}

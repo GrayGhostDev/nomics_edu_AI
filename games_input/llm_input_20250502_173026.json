@@ -1,0 +1,41 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "generation_time": "2025-05-02T17:30:26.119225"
+  },
+  "teacher_info": {
+    "id": "74255577",
+    "name": "Gray Ghost Data Consultants",
+    "school": "GGA",
+    "grade_level": "6",
+    "subjects": [
+      "History"
+    ],
+    "preferred_teaching_style": "Interactive",
+    "timestamp": "2025-05-02T17:29:36.937698"
+  },
+  "game_request": {
+    "subject": "LanguageArts",
+    "game_type": "StoryForgerAdventure",
+    "topic": "ALl",
+    "learning_objectives": [
+      "ALL"
+    ],
+    "grade_level": 6,
+    "difficulty": 2,
+    "custom_content": "",
+    "time_limit": 60,
+    "game_specifics": {
+      "story_themes": [
+        "Adventure"
+      ],
+      "character_types": [
+        "Hero"
+      ],
+      "plot_elements": [
+        "Conflict"
+      ]
+    },
+    "timestamp": "2025-05-02T17:30:26.065850"
+  }
+}

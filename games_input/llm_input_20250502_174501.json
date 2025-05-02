@@ -1,0 +1,41 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "generation_time": "2025-05-02T17:45:01.174632"
+  },
+  "teacher_info": {
+    "id": "e77f9659",
+    "name": "Gray Ghost Data Consultants",
+    "school": "Gray Ghost Acamedy",
+    "grade_level": "1",
+    "subjects": [
+      "Math"
+    ],
+    "preferred_teaching_style": "Interactive",
+    "timestamp": "2025-05-02T17:44:24.250597"
+  },
+  "game_request": {
+    "subject": "Mathematics",
+    "game_type": "NumberParkour",
+    "topic": "Addition",
+    "learning_objectives": [
+      "Addition"
+    ],
+    "grade_level": 1,
+    "difficulty": 1,
+    "custom_content": "",
+    "time_limit": null,
+    "game_specifics": {
+      "problem_types": [
+        "Addition",
+        "Subtraction"
+      ],
+      "value_ranges": {
+        "min": 1,
+        "max": 393
+      },
+      "difficulty_progression": true
+    },
+    "timestamp": "2025-05-02T17:45:01.106847"
+  }
+}

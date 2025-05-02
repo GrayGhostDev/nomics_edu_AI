@@ -1,0 +1,18 @@
+title: Basic Addition Practice
+description: A beginner-friendly dungeon for practicing addition
+topics:
+  - addition
+  - basic_math
+difficulty: basic
+content: >
+  Learn addition through an exciting dungeon adventure! Practice adding numbers from 1 to 20.
+problems:
+  - Single digit addition (1-9)
+  - Double digit addition (10-20)
+  - Missing number problems
+  - Word problems involving addition
+objectives:
+  - Master single-digit addition
+  - Understand place value in double-digit addition
+  - Solve simple word problems
+  - Complete addition equations with missing numbers 

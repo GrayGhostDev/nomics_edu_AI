@@ -1,0 +1,39 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "generation_time": "2025-05-02T17:21:11.218037"
+  },
+  "teacher_info": {
+    "id": "f6db7ee3",
+    "name": "Gray Ghost Data Consultants",
+    "school": "GGA",
+    "grade_level": "1",
+    "subjects": [
+      "Science"
+    ],
+    "preferred_teaching_style": "Interactive",
+    "timestamp": "2025-05-02T17:20:32.235571"
+  },
+  "game_request": {
+    "subject": "Science",
+    "game_type": "EcosystemExplorer",
+    "topic": "Solar System",
+    "learning_objectives": [
+      "Planets"
+    ],
+    "grade_level": 5,
+    "difficulty": 2,
+    "custom_content": "",
+    "time_limit": 60,
+    "game_specifics": {
+      "ecosystem_type": "Grassland",
+      "species_interactions": [
+        "Symbiosis"
+      ],
+      "environmental_factors": [
+        "Human Impact"
+      ]
+    },
+    "timestamp": "2025-05-02T17:21:11.162225"
+  }
+}

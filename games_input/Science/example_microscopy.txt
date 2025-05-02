@@ -1,0 +1,33 @@
+title: Introduction to Microscopy
+description: Learn to use a microscope and observe cell structures
+topics:
+  - microscopy
+  - cell_biology
+difficulty: basic
+
+content: >
+  Discover the microscopic world! Learn how to properly use a microscope and observe different types of cells.
+
+experiments:
+- Microscope parts and functions
+- Proper slide preparation
+- Observing plant cells
+- Observing animal cells
+
+equipment:
+- Microscope
+- Glass slides
+- Cover slips
+- Prepared specimens
+
+safety_guidelines:
+- Handle glass slides with care
+- Keep microscope clean
+- Use proper lighting
+- Follow proper specimen disposal procedures
+
+objectives:
+- Identify microscope parts
+- Master microscope focusing techniques
+- Prepare wet mount slides
+- Identify basic cell structures 

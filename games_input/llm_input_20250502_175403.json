@@ -1,0 +1,40 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "generation_time": "2025-05-02T17:54:03.288020"
+  },
+  "teacher_info": {
+    "id": "7fc3e051",
+    "name": "Gray Ghost",
+    "school": "GGA",
+    "grade_level": "1",
+    "subjects": [
+      "Math"
+    ],
+    "preferred_teaching_style": "Interactive",
+    "timestamp": "2025-05-02T17:53:35.170775"
+  },
+  "game_request": {
+    "subject": "Mathematics",
+    "game_type": "NumberParkour",
+    "topic": "Addition",
+    "learning_objectives": [
+      "Addition"
+    ],
+    "grade_level": 1,
+    "difficulty": 1,
+    "custom_content": "",
+    "time_limit": null,
+    "game_specifics": {
+      "problem_types": [
+        "Addition"
+      ],
+      "value_ranges": {
+        "min": 1,
+        "max": 111
+      },
+      "difficulty_progression": true
+    },
+    "timestamp": "2025-05-02T17:54:03.214908"
+  }
+}

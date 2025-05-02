@@ -1,0 +1,19 @@
+{
+  "name": "TimeTravelerChronicles",
+  "version": "1.0.0",
+  "subject": "History",
+  "min_grade": 1,
+  "max_grade": 12,
+  "supported_difficulties": [
+    1,
+    2,
+    3
+  ],
+  "description": "Default template for History",
+  "last_updated": "2025-04-30T21:04:11.154527",
+  "author": "System",
+  "tags": [
+    "history"
+  ],
+  "dependencies": []
+}

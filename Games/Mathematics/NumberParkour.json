@@ -1,0 +1,19 @@
+{
+  "name": "NumberParkour",
+  "version": "1.0.0",
+  "subject": "Mathematics",
+  "min_grade": 1,
+  "max_grade": 12,
+  "supported_difficulties": [
+    1,
+    2,
+    3
+  ],
+  "description": "Default template for Mathematics",
+  "last_updated": "2025-04-30T21:04:11.153677",
+  "author": "System",
+  "tags": [
+    "mathematics"
+  ],
+  "dependencies": []
+}

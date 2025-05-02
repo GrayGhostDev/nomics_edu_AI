@@ -1,0 +1,39 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "generation_time": "2025-05-02T17:27:10.490064"
+  },
+  "teacher_info": {
+    "id": "e0e8ca64",
+    "name": "Gray Ghost Data Consultants",
+    "school": "Gray Ghost Acamedy",
+    "grade_level": "1",
+    "subjects": [
+      "History"
+    ],
+    "preferred_teaching_style": "Interactive",
+    "timestamp": "2025-05-02T17:25:43.288176"
+  },
+  "game_request": {
+    "subject": "History",
+    "game_type": "CivilizationBuilder",
+    "topic": "US Politics",
+    "learning_objectives": [
+      "US Presidents"
+    ],
+    "grade_level": 9,
+    "difficulty": 2,
+    "custom_content": "",
+    "time_limit": 30,
+    "game_specifics": {
+      "historical_era": "Modern",
+      "civilization_aspects": [
+        "Government"
+      ],
+      "historical_events": [
+        "Social Changes"
+      ]
+    },
+    "timestamp": "2025-05-02T17:27:10.440292"
+  }
+}
