@@ -5,7 +5,7 @@ langchain-community==0.3.23
 langchain-ollama==0.3.2
 langchain-openai==0.3.14
 openai==1.76.2
-requests==2.31.0
+requests==2.32.2
 
 # Data handling
 python-dotenv==1.0.1
