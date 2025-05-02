@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VSCode
+.vscode/
+
+# Mac
+*.DS_Store
+
+# Analytics and logs
+analytics.json
+*.log
+
+# Large files and models
+*.h5
+*.ckpt
+*.pth
+*.pt
+*.onnx
+*.dylib
+*.so
+*.pkl
+*.npz
+*.npy
+
+# Streamlit cache
+.streamlit/
+
+# Test outputs
+test_output/
+
+# Ignore input/output game files if not needed in repo
+games_input/
+games_output/ 
