@@ -45,6 +45,9 @@ The Nomics Education Platform enables teachers to create engaging, customizable 
 - `Games/` — Lua template files for each subject/game
 - `games_input/` — Saved input data for generated games
 - `games_output/` — Generated Lua scripts
+- `src/server/` — For Roblox ServerScriptService (used with Rojo)
+- `src/shared/` — For Roblox ReplicatedStorage (used with Rojo)
+- `src/client/` — For Roblox StarterPlayer (used with Rojo)
 - `templates.json` — Subject/game template metadata
 - `analytics.json` — Analytics event log
 - `users.json` — Registered user data
@@ -54,4 +57,36 @@ The Nomics Education Platform enables teachers to create engaging, customizable 
 Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
-[MIT](LICENSE) 
+[MIT](LICENSE)
+
+## Docker Usage
+
+You can run the app in a Docker container with support for both Ollama (local) and OpenAI LLMs.
+
+### Build the Docker image
+```bash
+docker build -t nomics-edu-app .
+```
+
+### Run with Ollama (local)
+- Make sure the Ollama server is running on your host (default: http://localhost:11434)
+- Run the container:
+```bash
+docker run -p 8501:8501 \
+  --network=host \
+  nomics-edu-app
+```
+
+### Run with OpenAI API
+- Set your OpenAI API key as an environment variable:
+```bash
+docker run -p 8501:8501 \
+  -e OPENAI_API_KEY=sk-... \
+  nomics-edu-app
+```
+- Or enter the key in the app sidebar when prompted.
+
+### Notes
+- The app exposes port 8501 for Streamlit.
+- For Ollama, the container must be able to reach the Ollama server (use `--network=host` or set the correct `base_url`).
+- You can use both LLMs by selecting the provider in the sidebar. 

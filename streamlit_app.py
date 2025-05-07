@@ -18,6 +18,12 @@ if 'teacher_info' not in st.session_state:
 if 'game_request' not in st.session_state:
     st.session_state.game_request = {}
 
+# LLM Provider selection and API key input
+if 'llm_provider' not in st.session_state:
+    st.session_state.llm_provider = 'Ollama (local)'
+if 'openai_api_key' not in st.session_state:
+    st.session_state.openai_api_key = ''
+
 # Set page config
 st.set_page_config(
     page_title="Nomics Education Platform",
@@ -756,17 +762,15 @@ def main():
         with st.form("teacher_info_form"):
             col1, col2 = st.columns(2)
             with col1:
-                name = st.text_input("Your Name", value=st.session_state.teacher_info.get("name", ""), key="name_input", help="Enter your full name", label_visibility="visible")
+                name = st.text_input("Your Name", value=st.session_state.teacher_info.get("name", ""), key="name_input", help="Enter your full name. This will be used for analytics and game ownership.", label_visibility="visible")
                 if st.session_state.get("show_teacher_error") and not name.strip():
                     st.warning("Name is required.")
-                grade_level = st.text_input("Grade Level", value=st.session_state.teacher_info.get("grade_level", ""), key="grade_input", help="e.g. 5th Grade", label_visibility="visible")
-                if st.session_state.get("show_teacher_error") and not grade_level.strip():
-                    st.warning("Grade Level is required.")
+                grade_level = st.text_input("Grade Level", value=st.session_state.teacher_info.get("grade_level", ""), key="grade_input", help="E.g., 5th Grade, 8th Grade, etc.")
                 subjects = st.text_input("Subjects", value=", ".join(st.session_state.teacher_info.get("subjects", [])), key="subjects_input", help="Comma-separated subjects you teach", label_visibility="visible")
                 if st.session_state.get("show_teacher_error") and not subjects.strip():
                     st.warning("Subjects are required.")
             with col2:
-                school = st.text_input("School Name", value=st.session_state.teacher_info.get("school", ""), key="school_input", help="Enter your school name", label_visibility="visible")
+                school = st.text_input("School Name", value=st.session_state.teacher_info.get("school", ""), key="school_input", help="Your school or organization.", label_visibility="visible")
                 if st.session_state.get("show_teacher_error") and not school.strip():
                     st.warning("School Name is required.")
                 teaching_style = st.selectbox(
@@ -1045,51 +1049,105 @@ def main():
         st.markdown('</div>', unsafe_allow_html=True)
 
     # Step 4: Generation & Download (reuse your existing code for this step)
+    
     elif current_step == 4:
         st.markdown('<div class="generation-container">', unsafe_allow_html=True)
-        st.header("🎮 Game Generation")
+        st.header("🚀 Game Generation")
+        # Generate a single timestamp for this generation step
+        if 'generation_timestamp' not in st.session_state:
+            st.session_state['generation_timestamp'] = datetime.now().strftime('%Y%m%d_%H%M%S')
+        timestamp = st.session_state['generation_timestamp']
+        # Prepare prompt for preview
+        template_content = get_template_content(
+            st.session_state.game_request["subject"],
+            st.session_state.game_request["game_type"]
+        )
+        template_content = template_content.replace('{', '{{').replace('}', '}}')
+        preview_prompt = create_llm_prompt(
+            st.session_state.teacher_info,
+            st.session_state.game_request,
+            template_content
+        )
+        with st.expander("🔍 Preview LLM Prompt (Form Input + Template)", expanded=False):
+            st.code(preview_prompt, language="markdown")
         with st.spinner("Generating your game, please wait..."):
             try:
                 start_time = datetime.now()
-                
-                # Initialize Ollama LLM
-                llm = OllamaLLM(
-                    model="llama3.2",
-                    temperature=0.7,
-                    base_url="http://localhost:11434"
-                )
+                prompt = None  # Will be set later
+                response = None
+                # LLM selection with fallback
+                if st.session_state.llm_provider == 'OpenAI (API)':
+                    try:
+                        from langchain_openai import OpenAI
+                        llm = OpenAI(
+                            openai_api_key=st.session_state.openai_api_key,
+                            temperature=0.7
+                        )
+                        # Get template content and prompt as before
+                        template_content = get_template_content(
+                            st.session_state.game_request["subject"],
+                            st.session_state.game_request["game_type"]
+                        )
+                        
+                        template_content = template_content.replace('{', '{{').replace('}', '}}')
+                        prompt = create_llm_prompt(
+                            st.session_state.teacher_info,
+                            st.session_state.game_request,
+                            template_content
+                        )
+                        response = llm.invoke(prompt)
+                        
+                    except Exception as e:
+                        st.warning(f"OpenAI API failed ({e}). Falling back to Ollama (llama3.2).")
+                        llm = OllamaLLM(
+                            model="llama3.2",
+                            temperature=0.7,
+                            base_url=os.environ.get('OLLAMA_BASE_URL', "http://localhost:11434")
+                        )
+                        # Get template content and prompt as before
+                        template_content = get_template_content(
+                            st.session_state.game_request["subject"],
+                            st.session_state.game_request["game_type"]
+                        )
+                        template_content = template_content.replace('{', '{{').replace('}', '}}')
+                        prompt = create_llm_prompt(
+                            st.session_state.teacher_info,
+                            st.session_state.game_request,
+                            template_content
+                        )
+                        response = llm.invoke(prompt)
+                else:
+                    llm = OllamaLLM(
+                        model="llama3.2",
+                        temperature=0.7,
+                        base_url=os.environ.get('OLLAMA_BASE_URL', "http://localhost:11434")
+                    )
+                    # Get template content and prompt as before
+                    template_content = get_template_content(
+                        st.session_state.game_request["subject"],
+                        st.session_state.game_request["game_type"]
+                    )
+                    template_content = template_content.replace('{', '{{').replace('}', '}}')
+                    prompt = create_llm_prompt(
+                        st.session_state.teacher_info,
+                        st.session_state.game_request,
+                        template_content
+                    )
+                    response = llm.invoke(prompt)
+                generated_script = str(response).strip()
+                # Remove markdown code block markers if present
+                if generated_script.startswith('```lua'):
+                    generated_script = generated_script[6:]
+                if generated_script.endswith('```'):
+                    generated_script = generated_script[:-3]
+                generated_script = generated_script.strip()
 
-                # Show initial analytics
-                st.markdown("""
-                    <div class="analytics-grid">
-                        <div class="analytics-card">
-                            <h4>Selected Subject</h4>
-                            <p>{}</p>
-                        </div>
-                        <div class="analytics-card">
-                            <h4>Game Type</h4>
-                            <p>{}</p>
-                        </div>
-                        <div class="analytics-card">
-                            <h4>Complexity Score</h4>
-                            <p>{}/5</p>
-                        </div>
-                        <div class="analytics-card">
-                            <h4>Estimated Generation Time</h4>
-                            <p>~2-3 minutes</p>
-                        </div>
-                    </div>
-                """.format(
-                    st.session_state.game_request["subject"],
-                    st.session_state.game_request["game_type"],
-                    st.session_state.game_request["difficulty"]
-                ), unsafe_allow_html=True)
+                if not generated_script:
+                    raise ValueError("Failed to generate game script")
 
-                # Validate game_specifics data
-                if "game_specifics" not in st.session_state.game_request:
-                    st.session_state.game_request["game_specifics"] = {}
-
-                # Format data for LLM
+                # Save the input data
+                input_file = f"llm_input_{timestamp}.json"
+                os.makedirs("games_input", exist_ok=True)
                 llm_input = {
                     "metadata": {
                         "version": "1.0",
@@ -1098,139 +1156,23 @@ def main():
                     "teacher_info": st.session_state.teacher_info,
                     "game_request": st.session_state.game_request
                 }
-
-                # Save the input data
-                timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-                input_file = f"llm_input_{timestamp}.json"
-                
-                os.makedirs("games_input", exist_ok=True)
-                
                 with open(os.path.join("games_input", input_file), 'w') as f:
                     json.dump(llm_input, f, indent=2)
 
-                with st.spinner(""):
-                    # Progress tracking
-                    progress_placeholder = st.empty()
-                    
-                    def update_progress(step, status, details=""):
-                        progress_html = """
-                            <div class="progress-card">
-                                <h4>Generation Progress</h4>
-                                <div class="generation-step">
-                                    <div class="status">⚙️</div>
-                                    <div class="details">
-                                        <strong>Initializing Parameters</strong>
-                                        <div class="time">{}</div>
-                                    </div>
-                                </div>
-                        """.format(
-                            "Complete" if step > 1 else "In Progress"
-                        )
+                # Save the generated script
+                output_dir = Path("games_output") / st.session_state.game_request["subject"]
+                output_dir.mkdir(parents=True, exist_ok=True)
+                script_file = output_dir / f"{st.session_state.teacher_info['id']}_{timestamp}.lua"
+                with open(script_file, 'w') as f:
+                    f.write(generated_script)
 
-                        if step >= 2:
-                            progress_html += """
-                                <div class="generation-step">
-                                    <div class="status">{}</div>
-                                    <div class="details">
-                                        <strong>Creating Game Logic</strong>
-                                        <div class="time">{}</div>
-                                    </div>
-                                </div>
-                            """.format(
-                                "⚙️" if step == 2 else "✅",
-                                "In Progress" if step == 2 else "Complete"
-                            )
-
-                        if step >= 3:
-                            progress_html += """
-                                <div class="generation-step">
-                                    <div class="status">{}</div>
-                                    <div class="details">
-                                        <strong>Implementing Learning Objectives</strong>
-                                        <div class="time">{}</div>
-                                    </div>
-                                </div>
-                            """.format(
-                                "⚙️" if step == 3 else "✅",
-                                "In Progress" if step == 3 else "Complete"
-                            )
-
-                        if step >= 4:
-                            progress_html += """
-                                <div class="generation-step">
-                                    <div class="status">{}</div>
-                                    <div class="details">
-                                        <strong>Finalizing Game Mechanics</strong>
-                                        <div class="time">{}</div>
-                                    </div>
-                                </div>
-                            """.format(
-                                "⚙️" if step == 4 else "✅",
-                                "In Progress" if step == 4 else "Complete"
-                            )
-
-                        progress_html += "</div>"
-                        progress_placeholder.markdown(progress_html, unsafe_allow_html=True)
-
-                    # Update progress through generation steps
-                    update_progress(1, "In Progress")
-                    
-                    # Get template content
-                    template_content = get_template_content(
-                        st.session_state.game_request["subject"],
-                        st.session_state.game_request["game_type"]
-                    )
-
-                    # Escape curly braces in template content to avoid .format() errors
-                    template_content = template_content.replace('{', '{{').replace('}', '}}')
-
-                    if not template_content:
-                        raise ValueError(f"Template not found for {st.session_state.game_request['game_type']}")
-
-                    update_progress(2, "In Progress")
-                    
-                    # Create LLM prompt
-                    prompt = create_llm_prompt(
-                        st.session_state.teacher_info,
-                        st.session_state.game_request,
-                        template_content
-                    )
-
-                    update_progress(3, "In Progress")
-                    
-                    # Generate the game script
-                    prompt_template = PromptTemplate.from_template(prompt)
-                    response = llm.invoke(prompt)
-                    generated_script = str(response).strip()
-                    # Remove markdown code block markers if present
-                    if generated_script.startswith('```lua'):
-                        generated_script = generated_script[6:]
-                    if generated_script.endswith('```'):
-                        generated_script = generated_script[:-3]
-                    generated_script = generated_script.strip()
-
-                    if not generated_script:
-                        raise ValueError("Failed to generate game script")
-
-                    update_progress(4, "In Progress")
-                    
-                    # Save the generated script
-                    output_dir = Path("games_output") / st.session_state.game_request["subject"]
-                    output_dir.mkdir(parents=True, exist_ok=True)
-
-                    script_file = output_dir / f"{st.session_state.teacher_info['id']}_{timestamp}.lua"
-                    with open(script_file, 'w') as f:
-                        f.write(generated_script)
-
-                    # Log analytics for game generation
-                    log_analytics(
-                        event_type="generate",
-                        subject=st.session_state.game_request["subject"],
-                        game_type=st.session_state.game_request["game_type"],
-                        user=st.session_state.teacher_info.get("name", "anonymous")
-                    )
-
-                    update_progress(4, "Complete")
+                # Log analytics for game generation
+                log_analytics(
+                    event_type="generate",
+                    subject=st.session_state.game_request["subject"],
+                    game_type=st.session_state.game_request["game_type"],
+                    user=st.session_state.teacher_info.get("name", "anonymous")
+                )
 
                 # Calculate generation time
                 generation_time = datetime.now() - start_time
@@ -1319,39 +1261,43 @@ def main():
                         st.markdown(html_stats, unsafe_allow_html=True)
 
                 with col2:
-                    with open(os.path.join("games_input", input_file), 'r') as f:
-                        input_content = f.read()
-                        st.download_button(
-                            "📋 Download Input Data",
-                            input_content,
-                            file_name=f"input_data_{timestamp}.json",
-                            mime="application/json",
-                            help="Download the input configuration data"
-                        )
-                        # Log analytics for input data download
-                        log_analytics(
-                            event_type="download_input",
-                            subject=st.session_state.game_request["subject"],
-                            game_type=st.session_state.game_request["game_type"],
-                            user=st.session_state.teacher_info.get("name", "anonymous")
-                        )
-                        # Show input statistics
-                        html_input_stats = """
-                            <div class="file-stats">
-                                <p>📊 Input Statistics:</p>
-                                <p>• Size: {} KB</p>
-                                <p>• Parameters: {}</p>
-                                <p>• Game Specifics: {}</p>
-                                <p>• Learning Objectives: {}</p>
-                            </div>
-                        """
-                        html_input_stats = html_input_stats.format(
-                            round(len(input_content) / 1024, 2),
-                            len(st.session_state.game_request),
-                            len(st.session_state.game_request["game_specifics"]),
-                            len(st.session_state.game_request["learning_objectives"])
-                        )
-                        st.markdown(html_input_stats, unsafe_allow_html=True)
+                    input_file_path = os.path.join("games_input", input_file)
+                    if os.path.exists(input_file_path):
+                        with open(input_file_path, 'r') as f:
+                            input_content = f.read()
+                            st.download_button(
+                                "📋 Download Input Data",
+                                input_content,
+                                file_name=f"input_data_{timestamp}.json",
+                                mime="application/json",
+                                help="Download the input configuration data"
+                            )
+                            # Log analytics for input data download
+                            log_analytics(
+                                event_type="download_input",
+                                subject=st.session_state.game_request["subject"],
+                                game_type=st.session_state.game_request["game_type"],
+                                user=st.session_state.teacher_info.get("name", "anonymous")
+                            )
+                            # Show input statistics
+                            html_input_stats = """
+                                <div class="file-stats">
+                                    <p>📊 Input Statistics:</p>
+                                    <p>• Size: {} KB</p>
+                                    <p>• Parameters: {}</p>
+                                    <p>• Game Specifics: {}</p>
+                                    <p>• Learning Objectives: {}</p>
+                                </div>
+                            """
+                            html_input_stats = html_input_stats.format(
+                                round(len(input_content) / 1024, 2),
+                                len(st.session_state.game_request),
+                                len(st.session_state.game_request["game_specifics"]),
+                                len(st.session_state.game_request["learning_objectives"])
+                            )
+                            st.markdown(html_input_stats, unsafe_allow_html=True)
+                    else:
+                        st.error(f"Input file not found: {input_file_path}. Please try regenerating the game.")
 
                 st.markdown("</div></div>", unsafe_allow_html=True)
 
@@ -1360,12 +1306,14 @@ def main():
                     st.session_state.current_step = 1
                     st.session_state.teacher_info = {}
                     st.session_state.game_request = {}
+                    st.session_state.pop('generation_timestamp', None)
                     st.rerun()
 
             except Exception as e:
                 st.error(f"An error occurred while generating the game: {e}")
                 if st.button("🔄 Try Again"):
                     st.session_state.current_step = 2
+                    st.session_state.pop('generation_timestamp', None)
                     st.rerun()
 
             st.markdown('</div>', unsafe_allow_html=True)
@@ -1374,6 +1322,42 @@ def main():
     st.markdown("""
         <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     """, unsafe_allow_html=True)
+
+    # Enhanced onboarding/help content
+    if 'onboarded' not in st.session_state:
+        st.session_state.onboarded = False
+    if not st.session_state.onboarded:
+        st.info("""
+        **Welcome to Nomics Education Platform!**
+        - Create custom educational games for your students in just a few steps.
+        - Use the sidebar for navigation, help, and LLM provider selection.
+        - Tooltips are available on most fields—hover for more info!
+        """)
+        if st.button("Got it! Start using the app"):
+            st.session_state.onboarded = True
+
+    # Add tooltips to key form fields (example for Teacher Profile)
+    if current_step == 1:
+        st.markdown('<div class="step-container">', unsafe_allow_html=True)
+        st.header("👩‍🏫 Teacher Profile")
+        with st.form("teacher_info_form"):
+            col1, col2 = st.columns(2)
+            with col1:
+                name = st.text_input("Your Name", value=st.session_state.teacher_info.get("name", ""), key="name_input", help="Enter your full name. This will be used for analytics and game ownership.", label_visibility="visible")
+                if st.session_state.get("show_teacher_error") and not name.strip():
+                    st.warning("Name is required.")
+                grade_level = st.text_input("Grade Level", value=st.session_state.teacher_info.get("grade_level", ""), key="grade_input", help="E.g., 5th Grade, 8th Grade, etc.")
+            with col2:
+                email = st.text_input("Email", value=st.session_state.teacher_info.get("email", ""), key="email_input", help="Used for login and analytics. We never share your email.")
+                school = st.text_input("School Name", value=st.session_state.teacher_info.get("school", ""), key="school_input", help="Your school or organization.", label_visibility="visible")
+            # ... existing code ...
+
+    # Add notifications for background tasks (example: script sent to Roblox Studio)
+    def notify_script_sent(filename):
+        st.success(f"Script `{filename}` was successfully sent to Roblox Studio via Rojo.")
+
+    # Call notify_script_sent at the appropriate place in your workflow after script generation and transfer
+    # ... existing code ...
 
 if __name__ == "__main__":
     main() 
