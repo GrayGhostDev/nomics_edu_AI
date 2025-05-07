@@ -1102,7 +1102,7 @@ def main():
                         llm = OllamaLLM(
                             model="llama3.2",
                             temperature=0.7,
-                            base_url=os.environ.get('OLLAMA_BASE_URL', "http://localhost:11434")
+                            base_url=os.environ.get('OLLAMA_BASE_URL', "http://ollama:11434")
                         )
                         # Get template content and prompt as before
                         template_content = get_template_content(
@@ -1120,7 +1120,7 @@ def main():
                     llm = OllamaLLM(
                         model="llama3.2",
                         temperature=0.7,
-                        base_url=os.environ.get('OLLAMA_BASE_URL', "http://localhost:11434")
+                        base_url=os.environ.get('OLLAMA_BASE_URL', "http://ollama:11434")
                     )
                     # Get template content and prompt as before
                     template_content = get_template_content(

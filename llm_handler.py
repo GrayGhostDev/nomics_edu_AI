@@ -35,7 +35,7 @@ class OllamaHandler(LLMHandler):
     def __init__(self, model: str = "llama2"):
         super().__init__()
         self.model = model
-        self.api_base = "http://localhost:11434"
+        self.api_base = os.environ.get("OLLAMA_BASE_URL", "http://ollama:11434")
         
     def _generate_script_uncached(self, game_data: Dict[str, Any], template_content: str) -> str:
         # Read template

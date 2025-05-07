@@ -177,11 +177,11 @@ def main():
         llm = OllamaLLM(
             model="llama3.2",
             temperature=0.7,
-            base_url="http://localhost:11434"
+            base_url=os.environ.get("OLLAMA_BASE_URL", "http://ollama:11434")
         )
     except Exception as e:
         print(f"Error initializing Ollama: {str(e)}")
-        print("Please make sure Ollama is running locally (http://localhost:11434)")
+        print(f"Please make sure Ollama is running at {os.environ.get('OLLAMA_BASE_URL', 'http://ollama:11434')}")
         return
     
     # Initialize template manager
