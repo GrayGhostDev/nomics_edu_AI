@@ -1336,28 +1336,5 @@ def main():
         if st.button("Got it! Start using the app"):
             st.session_state.onboarded = True
 
-    # Add tooltips to key form fields (example for Teacher Profile)
-    if current_step == 1:
-        st.markdown('<div class="step-container">', unsafe_allow_html=True)
-        st.header("👩‍🏫 Teacher Profile")
-        with st.form("teacher_info_form"):
-            col1, col2 = st.columns(2)
-            with col1:
-                name = st.text_input("Your Name", value=st.session_state.teacher_info.get("name", ""), key="name_input", help="Enter your full name. This will be used for analytics and game ownership.", label_visibility="visible")
-                if st.session_state.get("show_teacher_error") and not name.strip():
-                    st.warning("Name is required.")
-                grade_level = st.text_input("Grade Level", value=st.session_state.teacher_info.get("grade_level", ""), key="grade_input", help="E.g., 5th Grade, 8th Grade, etc.")
-            with col2:
-                email = st.text_input("Email", value=st.session_state.teacher_info.get("email", ""), key="email_input", help="Used for login and analytics. We never share your email.")
-                school = st.text_input("School Name", value=st.session_state.teacher_info.get("school", ""), key="school_input", help="Your school or organization.", label_visibility="visible")
-            # ... existing code ...
-
-    # Add notifications for background tasks (example: script sent to Roblox Studio)
-    def notify_script_sent(filename):
-        st.success(f"Script `{filename}` was successfully sent to Roblox Studio via Rojo.")
-
-    # Call notify_script_sent at the appropriate place in your workflow after script generation and transfer
-    # ... existing code ...
-
 if __name__ == "__main__":
     main() 
