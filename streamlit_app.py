@@ -9,6 +9,7 @@ from pathlib import Path
 import hashlib
 import pandas as pd
 import threading
+import time
 
 # Initialize session state
 if 'current_step' not in st.session_state:
@@ -1075,7 +1076,17 @@ def main():
                 start_time = datetime.now()
                 prompt = None  # Will be set later
                 response = None
-                # LLM selection with fallback
+                # LLM selection with fallback and retry logic
+                def get_ollama_llm_with_retry(model, temperature, base_url, max_retries=5, delay=3):
+                    for attempt in range(1, max_retries + 1):
+                        try:
+                            from langchain_ollama import OllamaLLM
+                            return OllamaLLM(model=model, temperature=temperature, base_url=base_url)
+                        except Exception as e:
+                            if attempt == max_retries:
+                                raise
+                            st.warning(f"Ollama not ready (attempt {attempt}/{max_retries}), retrying in {delay}s...")
+                            time.sleep(delay)
                 if st.session_state.llm_provider == 'OpenAI (API)':
                     try:
                         from langchain_openai import OpenAI
@@ -1099,10 +1110,11 @@ def main():
                         
                     except Exception as e:
                         st.warning(f"OpenAI API failed ({e}). Falling back to Ollama (llama3.2).")
-                        llm = OllamaLLM(
+                        base_url = os.environ.get('OLLAMA_BASE_URL', "http://ollama:11434")
+                        llm = get_ollama_llm_with_retry(
                             model="llama3.2",
                             temperature=0.7,
-                            base_url=os.environ.get('OLLAMA_BASE_URL', "http://ollama:11434")
+                            base_url=base_url
                         )
                         # Get template content and prompt as before
                         template_content = get_template_content(
@@ -1117,10 +1129,11 @@ def main():
                         )
                         response = llm.invoke(prompt)
                 else:
-                    llm = OllamaLLM(
+                    base_url = os.environ.get('OLLAMA_BASE_URL', "http://ollama:11434")
+                    llm = get_ollama_llm_with_retry(
                         model="llama3.2",
                         temperature=0.7,
-                        base_url=os.environ.get('OLLAMA_BASE_URL', "http://ollama:11434")
+                        base_url=base_url
                     )
                     # Get template content and prompt as before
                     template_content = get_template_content(
